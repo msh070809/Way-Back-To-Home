@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <meta charset="UTF-8" />
-    <title>WayBackToHome</title>
+    <title>WayBackHome</title>
 
     <style>
       html,
       body,
-      #Canvas{
+      #game-container {
         margin: 0;
         padding: 0;
       }
 
-      #Canvas{
+      #game-container {
         min-width: 100vw;
         min-height: 100vh;
         display: flex;
@@ -20,14 +19,14 @@
         justify-content: center;
       }
 
-      #Canvas> canvas {
+      #game-container > canvas {
         border-radius: 5px;
       }
     </style>
   </head>
 
   <body>
-    <div id="Canvas"></div>
+    <div id="game-container"></div>
     <script src="./phaser.min.js"></script>
     <script src="./js/index.js" type="module"></script>
   </body>

@@ -1,10 +1,10 @@
 import Player from "./player.js";
 import MouseTileMarker from "./mouse-tile-maker.js";
 
-export default class PlatformerScene extends Phaser.Scene {
-
-
-	
+export default class Thirdscene extends Phaser.Scene {
+  constructor() {
+    super({ key: "Thirdscene" });
+  }
   preload() {
     this.load.spritesheet(
       "player",
@@ -21,14 +21,14 @@ export default class PlatformerScene extends Phaser.Scene {
 
     this.load.image("spike", "../assets/images/0x72-industrial-spike.png");
     this.load.image("tiles", "../assets/tilesets/0x72-industrial-tileset-32px-extruded.png");
-    this.load.tilemapTiledJSON("map", "../assets/tilemaps/Map3.json");
+    this.load.tilemapTiledJSON("map3", "../assets/tilemaps/Map3.json");
   }
 
   create() {
 	  //사망 여부 체크
     this.isPlayerDead = false;
   //위에서 불러논 맵을 변수에 할당한다 key를 사용
-    const map = this.make.tilemap({ key: "map" });
+    const map = this.make.tilemap({ key: "map3" });
     //위에서 불러논 타일을 변수에 할당한다 key를 사용
     const tiles = map.addTilesetImage("0x72-industrial-tileset-32px-extruded", "tiles");
   //맵에서 background로 설정한 타일들을 레이어 설정을 해준다
@@ -37,7 +37,6 @@ export default class PlatformerScene extends Phaser.Scene {
     this.groundLayer = map.createDynamicLayer("Ground", tiles);
     //맵에서 foreground로 설정한 타일들을 레이어 설정을 해준다
     map.createLayer("Foreground", tiles);
-    const endPoint = map.findObject("Objects", obj => obj.name =="End Point");
     const spawnPoint = map.findObject("Objects", obj => obj.name == "Spawn Point");
     this.player = new Player(this, spawnPoint.x, spawnPoint.y);
     // 맵의 오브젝트로 스폰포인트 표현.
@@ -67,8 +66,8 @@ export default class PlatformerScene extends Phaser.Scene {
 
     // 안내문
     this.add
-      .text(16, 16, "화살표로 캐릭터를 움직이시오\n마우스클릭을 통한 박스생성\nshift+마우스 왼쪽 클릭을 통한 박스 제거", {
-        font: "22px bold",
+      .text(16, 16, "마우스클릭을 통한 박스생성\nshift+마우스 왼쪽 클릭을 통한 박스 제거", {
+        font: "18px bold",
         fill: "#000000",
         padding: { x: 20, y: 10 },
         backgroundColor: "#ffffff"
@@ -77,6 +76,10 @@ export default class PlatformerScene extends Phaser.Scene {
   }
 
   update(time, delta) {
+    if(this.player.sprite.x >= 1680 && this.player.sprite.y <= 288){
+		  //다른 씬으로 이동. 인자는 이동할 씬의 키값
+		  this.scene.start("Fourthscene");
+	  }
 	  let ShiftKey;
     if (this.isPlayerDead) return;
 
@@ -90,9 +93,9 @@ export default class PlatformerScene extends Phaser.Scene {
       if (pointer.isDown) {
         this.groundLayer.removeTileAtWorldXY(worldPoint.x, worldPoint.y);
         }
-  }
-  else
-  {
+    }
+    else
+    {
       if (pointer.isDown) {
           const tile = this.groundLayer.putTileAtWorldXY(6, worldPoint.x, worldPoint.y);
           if(tile!=null)
@@ -100,12 +103,13 @@ export default class PlatformerScene extends Phaser.Scene {
              tile.setCollision(true);
             }
         }
-  }
+    }
+    //가시와의 충돌판정
     if (
     		this.player.sprite.y > this.groundLayer.height ||
-      this.physics.world.overlap(this.player.sprite, this.spikeGroup)
-    ) {
-      // 
+        this.physics.world.overlap(this.player.sprite, this.spikeGroup)
+       )
+      {
       this.isPlayerDead = true;
       //이펙트
       const cam = this.cameras.main;
@@ -120,7 +124,6 @@ export default class PlatformerScene extends Phaser.Scene {
         this.player.destroy();
         this.scene.restart();
       });
-    }
-    
+      }  
   }
 }
