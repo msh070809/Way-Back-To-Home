@@ -3,6 +3,7 @@ import MouseTileMarker from "./mouse-tile-maker.js";
 
 export default class PlatformerScene extends Phaser.Scene {
 
+
 	
   preload() {
     this.load.spritesheet(
@@ -20,7 +21,7 @@ export default class PlatformerScene extends Phaser.Scene {
 
     this.load.image("spike", "../assets/images/0x72-industrial-spike.png");
     this.load.image("tiles", "../assets/tilesets/0x72-industrial-tileset-32px-extruded.png");
-    this.load.tilemapTiledJSON("map", "../assets/tilemaps/platformer.json");
+    this.load.tilemapTiledJSON("map", "../assets/tilemaps/Map3.json");
   }
 
   create() {
@@ -85,33 +86,21 @@ export default class PlatformerScene extends Phaser.Scene {
     // 클릭시 타일 생성
     const pointer = this.input.activePointer;
     const worldPoint = pointer.positionToCamera(this.cameras.main);
-    if(ShiftKey.isDown)
-    {
-        if (pointer.isDown) {
-        	this.groundLayer.removeTileAtWorldXY(worldPoint.x, worldPoint.y);
-          }
-   	}
-    else
-    {
-        if (pointer.isDown) {
-            const tile = this.groundLayer.putTileAtWorldXY(6, worldPoint.x, worldPoint.y);
-            
-            tile.setCollision(true);
-          }
-    }
-    if((this.player.sprite.x==1664)&&(this.player.sprite.y==280))
-    {
-        // 캐릭터 죽을때 순간 멈추는 기능
-        this.player.freeze();
-        this.marker.destroy();
-        //카메라가 꺼지면서 캐릭터 랑 씬 리스타트
-        cam.once("camerafadeoutcomplete", () => {
-          this.player.destroy();
-          this.scene.restart();
-        });
-    }
-    	//충돌 판정 캐릭터와 스파이크 그룹이 겹칠때 충돌판정  
-    	//
+    if (ShiftKey.isDown) {
+      if (pointer.isDown) {
+        this.groundLayer.removeTileAtWorldXY(worldPoint.x, worldPoint.y);
+        }
+  }
+  else
+  {
+      if (pointer.isDown) {
+          const tile = this.groundLayer.putTileAtWorldXY(6, worldPoint.x, worldPoint.y);
+          if(tile!=null)
+            {
+             tile.setCollision(true);
+            }
+        }
+  }
     if (
     		this.player.sprite.y > this.groundLayer.height ||
       this.physics.world.overlap(this.player.sprite, this.spikeGroup)
