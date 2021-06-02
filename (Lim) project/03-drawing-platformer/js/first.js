@@ -64,7 +64,7 @@ export default class firstScene extends Phaser.Scene {
 
   update(time, delta) {
 	  
-	  if(this.player.sprite.x > this.groundLayer.width * 0.99 && this.player.sprite.y > this.groundLayer.height * 0.5){
+	  if(this.player.sprite.x > this.groundLayer.width * 0.9 && this.player.sprite.y < this.groundLayer.height * 0.5){
 		  //다른 씬으로 이동. 인자는 이동할 씬의 키값
 		  this.scene.start("PlatformerScene");
 	  }

@@ -2,6 +2,7 @@
 import PlatformerScene from "./platformer-scene.js";
 import firstScene from "./first.js";
 import startscene from "./start.js";
+import startscene from "./clear.js";
 
 const config = {
   type: Phaser.AUTO,
@@ -11,7 +12,7 @@ const config = {
   pixelArt: true,
   backgroundColor: "#1d212d",
   //사용할 씬 전부 호출, 배열 안의 순서대로 호출됨
-  scene: [startscene, firstScene, PlatformerScene],
+  scene: [startscene, firstScene, PlatformerScene, clearscene],
   physics: {
     default: "arcade",
     arcade: {

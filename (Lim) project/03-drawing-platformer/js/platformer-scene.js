@@ -101,6 +101,11 @@ export default class PlatformerScene extends Phaser.Scene {
     	this.player.sprite.y = this.groundLayer.height * 0.3;
     }
     
+    if(this.player.sprite.x > this.groundLayer.width * 0.99 && this.player.sprite.y < this.groundLayer.height * 0.5){
+		  //다른 씬으로 이동. 인자는 이동할 씬의 키값
+		  this.scene.start("clearscene");
+	  }
+    
 	if (
       this.player.sprite.y > this.groundLayer.height ||
       this.physics.world.overlap(this.player.sprite, this.spikeGroup)
@@ -108,6 +113,8 @@ export default class PlatformerScene extends Phaser.Scene {
       this.isPlayerDead = true;
 
       const cam = this.cameras.main;
+      cam.shake(100, 0.05);
+      cam.fade(250, 0, 0, 0);
 
       this.player.freeze();
       this.marker.destroy();
