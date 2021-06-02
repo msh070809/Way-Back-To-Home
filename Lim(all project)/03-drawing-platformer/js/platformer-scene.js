@@ -1,13 +1,13 @@
 import Player from "./player.js";
 import MouseTileMarker from "./mouse-tile-maker.js";
 
-
-/**
- * A class that extends Phaser.Scene and wraps up the core logic for the platformer level.
- */
-
 export default class PlatformerScene extends Phaser.Scene {
-  preload() {
+	//씬끼리 구분을 위한 키값 부여
+	constructor() {
+	    super({ key: "PlatformerScene" });
+	  }
+	
+	preload() {
     this.load.spritesheet(
       "player",
       "../assets/spritesheets/0x72-industrial-player-32px-extruded.png",
@@ -20,20 +20,20 @@ export default class PlatformerScene extends Phaser.Scene {
     );
     this.load.image("spike", "../assets/images/0x72-industrial-spike.png");
     this.load.image("tiles", "../assets/tilesets/0x72-industrial-tileset-32px-extruded.png");
-    this.load.tilemapTiledJSON("map", "../assets/tilemaps/platformer.json");
+    this.load.tilemapTiledJSON("miromap", "../assets/tilemaps/platformer.json");
   }
 
   create() {
     this.isPlayerDead = false;
 
-    const map = this.make.tilemap({ key: "map" });
-    const tiles = map.addTilesetImage("0x72-industrial-tileset-32px-extruded", "tiles");
+    const miromap = this.make.tilemap({ key: "miromap" });
+    const tiles = miromap.addTilesetImage("0x72-industrial-tileset-32px-extruded", "tiles");
 
-    map.createDynamicLayer("Background", tiles);
-    this.groundLayer = map.createDynamicLayer("Ground", tiles);
-    map.createDynamicLayer("Foreground", tiles);
+    miromap.createDynamicLayer("Background", tiles);
+    this.groundLayer = miromap.createDynamicLayer("Ground", tiles);
+    miromap.createDynamicLayer("Foreground", tiles);
 
-    const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
+    const spawnPoint = miromap.findObject("Objects", obj => obj.name === "Spawn Point");
     this.player = new Player(this, spawnPoint.x, spawnPoint.y);
 
     this.groundLayer.setCollisionByProperty({ collides: true });
@@ -54,13 +54,13 @@ export default class PlatformerScene extends Phaser.Scene {
     });
 
     this.cameras.main.startFollow(this.player.sprite);
-    //this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    this.cameras.main.setSize(300, 200);
+    this.cameras.main.setBounds(0, 0, miromap.widthInPixels, miromap.heightInPixels);
+    this.cameras.main.setSize(400, 200);
 
-    this.marker = new MouseTileMarker(this, map);
+    this.marker = new MouseTileMarker(this, miromap);
 
     this.add
-      .text(16, 16, "Arrow/WASD to move & jump\nLeft click to draw platforms", {
+      .text(16, 16, "어두운 미로를 탈출하자!", {
         font: "18px monospace",
         fill: "#000000",
         padding: { x: 20, y: 10 },
@@ -84,20 +84,30 @@ export default class PlatformerScene extends Phaser.Scene {
     }
     
     //카메라가 비추는 범위를 증가시켜준다.
-    if(this.player.sprite.x <= this.groundLayer.width * 0.02 && this.player.sprite.y < this.groundLayer.height * 0.7){
+    if(this.player.sprite.x <= this.groundLayer.width * 0.02 && this.player.sprite.y < this.groundLayer.height * 0.3){
     		this.cameras.main.startFollow(this.player.sprite);
-            this.cameras.main.setSize(500, 400);
+            this.cameras.main.setSize(800, 600);
     }
     
-    if (
+    //함정 게이트
+    if(this.player.sprite.x <= this.groundLayer.width * 0.03 && this.player.sprite.y > this.groundLayer.height * 0.3) {
+    	this.player.sprite.x = this.groundLayer.width * 0.95;
+    	this.player.sprite.y = this.groundLayer.height * 0.55;
+    }
+    
+    //클리어 게이트
+    if(this.player.sprite.x >= this.groundLayer.width * 0.36 && this.player.sprite.x <= this.groundLayer.width * 0.37 && this.player.sprite.y < this.groundLayer.height * 0.15) {
+    	this.player.sprite.x = this.groundLayer.width * 0.9;
+    	this.player.sprite.y = this.groundLayer.height * 0.3;
+    }
+    
+	if (
       this.player.sprite.y > this.groundLayer.height ||
       this.physics.world.overlap(this.player.sprite, this.spikeGroup)
     ) {
       this.isPlayerDead = true;
 
       const cam = this.cameras.main;
-      cam.shake(100, 0.05);
-      cam.fade(250, 0, 0, 0);
 
       this.player.freeze();
       this.marker.destroy();
