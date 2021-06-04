@@ -1,8 +1,7 @@
 import Player from "./player.js";
 import MouseTileMarker from "./mouse-tile-maker.js";
 
-var Num=15;
-var DNum=15;
+var Num=1000;
 export default class Fourthscene extends Phaser.Scene {
   constructor() {
     super({ key: "Fourthscene" });
@@ -27,8 +26,7 @@ export default class Fourthscene extends Phaser.Scene {
   }
 
   create() {
-	 Num=10;
-   DNum=10;
+	 Num=1000;
 	  //사망 여부 체크
     this.isPlayerDead = false;
   //위에서 불러논 맵을 변수에 할당한다 key를 사용
@@ -74,7 +72,7 @@ export default class Fourthscene extends Phaser.Scene {
   update(time, delta) {
     if(this.player.sprite.x >= 1680 && this.player.sprite.y <= 288){
 		  //다른 씬으로 이동. 인자는 이동할 씬의 키값
-		  this.scene.start("Sixthscene");
+		  this.scene.start("Fifthscene");
 	  }
     let ShiftKey;	
     if (this.isPlayerDead) return;
@@ -86,10 +84,9 @@ export default class Fourthscene extends Phaser.Scene {
     const pointer = this.input.activePointer;
     const worldPoint = pointer.positionToCamera(this.cameras.main);
     ShiftKey=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
-    if (ShiftKey.isDown&&DNum>0) {
+    if (ShiftKey.isDown) {
         if (pointer.isDown) {
         	this.groundLayer.removeTileAtWorldXY(worldPoint.x, worldPoint.y);
-          DNum=DNum-1;
         }
     }
     else
@@ -126,13 +123,27 @@ export default class Fourthscene extends Phaser.Scene {
       });
     }
     // 안내문
+    if(Num>0)
+    {
     this.add
-      .text(16, 16, "남은 상자 생성가능 갯수:"+Num+"\n남은 삭제가능 갯수:"+DNum, {
+      .text(16, 16, "마우스 좌클릭으로 상자생성\nShift+마우스 우클릭으로 삭제", {
         font: "18px bold",
         fill: "#000000",
         padding: { x: 20, y: 10 },
         backgroundColor: "#ffffff"
       })
       .setScrollFactor(0);
+    }
+    else if(Num<=0)
+    {
+      this.add
+      .text(16,16, "더 이상의 상자 생성이 불가능 합니다.\n          ", {
+        font: "20px bold",
+        fill: "#000000",
+        padding: { x: 20, y: 10 },
+        backgroundColor: "#ffffff"
+      })
+      .setScrollFactor(0);  
+    }
   }
 }
